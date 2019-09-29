@@ -7,10 +7,12 @@ docker-compose up
 ```
 Após isso o grid console pode ser acessado via http://localhost:4444/grid/console
 
+
 Devido a falta de documentação e deocumentação conflitante com python, Java e outras
 linguagens a lingua optada para a execução das instruções do Selenium foi o Javascript
 através do Node.js (que deve estar instaladoe disponível no PATH na máquina em que 
 for ser executado):
 ```shell script
+npm install
 node index.js
 ```
