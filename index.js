@@ -15,7 +15,14 @@ const {Builder, By, Key, until} = require('selenium-webdriver');
         .build();
 
     try {
-        await driver.get('https://www.linkedin.com/feed');
+        await driver.get('https://www.linkedin.com/uas/login');
+		
+		let username = "ytx81495@zzrgg.com"
+		let password = "senhalonga"
+		
+		await driver.findElement(By.id('username')).sendKeys(username);
+        await driver.findElement(By.id('password')).sendKeys(password, Key.ENTER);
+		
         await driver.findElement(By.css('form#extended-nav-search input')).sendKeys('Nome', Key.ENTER);
         let firstResult = await driver.wait(until.elementLocated(By.css('.search-results li.search-result a')), 10000);
         let href = await firstResult.getAttribute('href');
