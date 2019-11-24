@@ -3,25 +3,17 @@
 version: "3"
 services:
   selenium-hub:
-    image: selenium/hub:3.141.59-vanadium
+    image: selenium/hub
     container_name: selenium-hub
     ports:
       - "4444:4444"
   chrome:
-    image: selenium/node-chrome:3.141.59-vanadium
+    image: selenium/node-chrome
     shm_size: '2gb'
     depends_on:
       - selenium-hub
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
-      - START_XVFB=false
-  firefox:
-    image: selenium/node-firefox:3.141.59-vanadium
-    shm_size: '2gb'
-    depends_on:
-      - selenium-hub
-    environment:
-      - HUB_HOST=selenium-hub
-      - HUB_PORT=4444
+      - NODE_MAX_INSTANCES=50
       - START_XVFB=false
