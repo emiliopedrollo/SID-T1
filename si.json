@@ -1,0 +1,44 @@
+{
+  "egressos": [
+    {
+      "nome": "Gabriel Belinazo",
+      "local": "Instituto Farroupilha"
+    },
+    {
+      "nome": "Darciele Zilio de Souza",
+      "local": "DBServer"
+    },
+	{
+      "nome": "Rodrigo Castro Gil",
+      "local": "Moinho Sul"
+    },
+	{
+      "nome": "José Carlos Puiati Pires",
+      "local": "Moinho Sul"
+    },
+	{
+      "nome": "Tobias Senger",
+      "local": "Sistema Irriga"
+    },
+	{
+      "nome": "Gabriel Marchesan",
+      "local": "IFRS"
+    },
+	{
+      "nome": "Gabriel Machado Lunardi",
+      "local": "UFRGS"
+    },
+	{
+      "nome": "Luis Fernando Battisti de Araujo e Silva",
+      "local": "CPD"
+    },
+	{
+      "nome": "Thiago L. T. da Silveira",
+      "local": "UFRGS"
+    },
+	{
+      "nome": "Eduardo Rosso Cargnelutti",
+      "local": "SYNTESIS"
+    }
+	]
+}
