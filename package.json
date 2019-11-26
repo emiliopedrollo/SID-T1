@@ -10,8 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "csv-parser": "^2.3.2",
     "faker": "^4.1.0",
     "minimist": "^1.2.0",
+    "promise.allsettled": "^1.0.1",
     "readline-sync": "^1.4.10",
     "selenium-webdriver": "^4.0.0-alpha.5"
   }

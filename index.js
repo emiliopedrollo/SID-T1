@@ -1,13 +1,16 @@
 const chrome = require('selenium-webdriver/chrome');
 const readline = require('readline-sync');
 const argv = require('minimist')(process.argv.slice(2));
+const fs = require('fs');
+const csv = require('csv-parser');
+const allSettled = require('promise.allsettled');
 const {Builder, By, Key, until} = require('selenium-webdriver');
 
-(async function example() {
+return (async function example() {
 
     const screen = {
-        width: 640,
-        height: 480
+        width: 1920,
+        height: 1080
     };
 
     let username;
@@ -29,38 +32,60 @@ const {Builder, By, Key, until} = require('selenium-webdriver');
         }
     }
 
-    let driver = await new Builder()
-        .forBrowser('chrome')
-        .usingServer('http://localhost:4444/wd/hub')
-        .setChromeOptions(new chrome.Options().headless().windowSize(screen))
-        .build();
+    let promises = [];
 
-    try {
-        await driver.get('https://www.linkedin.com/uas/login');
+    fs.createReadStream('SI.csv')
+        .pipe(csv())
+        .on('data', function(row) {
+            let name = row.nome;
+            promises.push(new Promise(async (resolve,reject) => {
+                let driver = await new Builder()
+                    .forBrowser('chrome')
+                    .usingServer('http://localhost:4444/wd/hub')
+                    .setChromeOptions(new chrome.Options().headless().windowSize(screen))
+                    .build();
+                try {
+                    await driver.get('https://www.linkedin.com/uas/login');
+                    await driver.findElement(By.id('username')).sendKeys(username);
+                    await driver.findElement(By.id('password')).sendKeys(password, Key.ENTER);
 
-		await driver.findElement(By.id('username')).sendKeys(username);
-        await driver.findElement(By.id('password')).sendKeys(password, Key.ENTER);
-		
+                    await driver.get('https://www.linkedin.com/search/results/all/?keywords=' + name);
 
-		let links = "https://br.linkedin.com/in/gabriel-belinazo-54b99680";
-		let nomes = "teste";
-		
-		//Pesquisar os dados (Via link direto ou pesquisar o nome)
-		 
-		await driver.get(links);
-        let nome = await driver.wait(until.elementLocated(By.className('inline t-24 t-black t-normal break-words')), 10000);
-		let empresa = await driver.wait(until.elementLocated(By.className('pv-entity__secondary-title t-14 t-black t-normal')), 10000);
-       
+                    let firstResult = await driver.wait(until.elementLocated(By.css('.search-results li.search-result a')), 10000);
+                    let href = await firstResult.getAttribute('href');
 
-	   /*await driver.findElement(By.css('form#extended-nav-search input')).sendKeys('Nome', Key.ENTER);
-        let firstResult = await driver.wait(until.elementLocated(By.css('.search-results li.search-result a')), 10000);
-        let href = await firstResult.getAttribute('href');*/
-		
-		//Salvar os dados
-		
-        console.log(href);
-    } finally {
-        await driver.quit();
-    }
+                    await driver.get(href);
+
+                    let currentCompanyTag = await driver.wait(until.elementLocated(By.css('a[data-control-name="position_see_more"] span')), 10000);
+
+                    let currentCompany = await currentCompanyTag.getText();
+
+                    resolve({"nome" : name, "empresa": currentCompany, "linkedin": href});
+                } catch(e) {
+                    console.error(e);
+                    reject(e);
+                } finally {
+                    await driver.takeScreenshot().then((img, err) => {
+                        if (err) console.error(err);
+                        if (!fs.existsSync('images')) fs.mkdirSync('images');
+                        fs.writeFile('images/' + name + '.png', img, 'base64', function (err) {
+                            if (err) console.error(err);
+                        })
+                    });
+                    await driver.close();
+                    await driver.quit();
+                }
+            }));
+        })
+        .on('end',() => {
+            allSettled.shim();
+            Promise.allSettled(promises).then(results => {
+                results = results.filter(result => result.status === 'fulfilled').map(result => result.value);
+                fs.writeFileSync("results.json", JSON.stringify(results));
+            });
+        });
+
+
+    return 0;
 
 })();
