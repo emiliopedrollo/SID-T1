@@ -1,4 +1,6 @@
 const chrome = require('selenium-webdriver/chrome');
+const readline = require('readline-sync');
+const argv = require('minimist')(process.argv.slice(2));
 const {Builder, By, Key, until} = require('selenium-webdriver');
 
 (async function example() {
@@ -8,6 +10,25 @@ const {Builder, By, Key, until} = require('selenium-webdriver');
         height: 480
     };
 
+    let username;
+    let password;
+
+    if (argv._.length < 1) {
+        console.error("Usage: node index.js LOGIN\n\nVocê precisa informar um login para o LinkedIn");
+        return 1;
+    } else {
+        username = argv._[0];
+        if (process.env.LN_PASSWORD) {
+            password = process.env.LN_PASSWORD;
+        } else if (argv._.length === 2) {
+            password = argv._[1];
+        } else {
+            password = readline.question('What is LinkedIn account password? ', {
+                hideEchoBack: true
+            });
+        }
+    }
+
     let driver = await new Builder()
         .forBrowser('chrome')
         .usingServer('http://localhost:4444/wd/hub')
@@ -16,16 +37,13 @@ const {Builder, By, Key, until} = require('selenium-webdriver');
 
     try {
         await driver.get('https://www.linkedin.com/uas/login');
-		//Login do site
-		let username = "ytx81495@zzrgg.com"
-		let password = "senhalonga"
-		
+
 		await driver.findElement(By.id('username')).sendKeys(username);
         await driver.findElement(By.id('password')).sendKeys(password, Key.ENTER);
 		
-		//Acessar o arquivo e ler os nomes
-		let links = "https://br.linkedin.com/in/gabriel-belinazo-54b99680"
-		let nomes = "teste"
+
+		let links = "https://br.linkedin.com/in/gabriel-belinazo-54b99680";
+		let nomes = "teste";
 		
 		//Pesquisar os dados (Via link direto ou pesquisar o nome)
 		 
