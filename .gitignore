@@ -2,3 +2,5 @@ dataset/
 # Project exclude paths
 /node_modules/
 .idea/
+site/images/
+site/results.json

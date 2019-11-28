@@ -56,6 +56,8 @@ return (async function example() {
 
                     await driver.get(href);
 
+                    console.log("Gathering info from " + name);
+
                     let currentCompanyTag = await driver.wait(until.elementLocated(By.css('a[data-control-name="position_see_more"] span')), 10000);
 
                     let currentCompany = await currentCompanyTag.getText();
@@ -67,8 +69,8 @@ return (async function example() {
                 } finally {
                     await driver.takeScreenshot().then((img, err) => {
                         if (err) console.error(err);
-                        if (!fs.existsSync('images')) fs.mkdirSync('images');
-                        fs.writeFile('images/' + name + '.png', img, 'base64', function (err) {
+                        if (!fs.existsSync('site/images')) fs.mkdirSync('site/images');
+                        fs.writeFile('site/images/' + name + '.png', img, 'base64', function (err) {
                             if (err) console.error(err);
                         })
                     });
@@ -81,7 +83,7 @@ return (async function example() {
             allSettled.shim();
             Promise.allSettled(promises).then(results => {
                 results = results.filter(result => result.status === 'fulfilled').map(result => result.value);
-                fs.writeFileSync("results.json", JSON.stringify(results));
+                fs.writeFileSync("site/results.json", JSON.stringify(results));
             });
         });
 

@@ -18,3 +18,10 @@ services:
       - NODE_MAX_INSTANCES=10
       - NODE_MAX_SESSION=5
       - START_XVFB=false
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./site:/usr/share/nginx/html:ro
+    ports:
+      - "80:80"
+    command: [nginx-debug, '-g', 'daemon off;']
