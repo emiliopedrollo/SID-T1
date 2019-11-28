@@ -34,7 +34,7 @@ return (async function example() {
 
     let promises = [];
 
-    fs.createReadStream('SI.csv')
+    fs.createReadStream('names.csv')
         .pipe(csv())
         .on('data', function(row) {
             let name = row.nome;
